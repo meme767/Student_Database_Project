@@ -1,73 +1,65 @@
-School Management System
+School Management System (SQLite & Python)
+A simple CLI-based School Management System built using Python and SQLite. The system allows managing student records and their enrolled lessons using relational database design principles (many-to-many relationship).
 
-This project is a simple School Management System made using Python and SQLite.
+Features
+Add Student (a):
 
-The program allows the user to manage student information and their enrolled lessons.
+Validates user input (letters-only names, positive integer age, valid YYYY-MM-DD date format).
 
-The main functions of the program are:
+Automatically generates and displays the newly created Student ID.
 
-- Add a new student
-- Delete a student
-- Update student information
-- Display student information
-- Add lessons to students
-- Store all information in an SQLite database
+Adds comma-separated lessons without duplicating existing lesson titles.
 
-Technologies Used:
+Delete Student (d):
 
-Python 3
-SQLite3
+Removes a student record by ID with automatic cascade deletion of linked lesson enrollments.
 
-Database:
+Update Student (u):
 
-The program uses three tables:
+Allows updating specific fields (First Name, Last Name, Age, Grade) while retaining existing values if left blank.
 
-1. students
-Stores the student's ID, first name, last name, age, grade, and registration date.
+Show Student Info (s):
 
-2. lessons
-Stores the lesson ID and lesson title.
+Displays complete student details along with all enrolled lessons retrieved via SQL JOIN.
 
-3. student_lessons
-Connects students with their enrolled lessons.
+Data Integrity:
 
-Main Functions:
+Foreign key constraints enabled to maintain relational integrity.
 
-create_tables()
-Creates the database tables when the program starts.
+Case-insensitive lesson formatting to avoid duplication.
 
-add_student()
-Adds a new student and allows the user to enter the lessons they are enrolled in.
+Database Architecture
+The system uses three main relational tables:
 
-delete_student()
-Deletes a student using their ID. If the student does not exist, a message is displayed.
+students: Stores primary student details (id, firstname, lastname, age, grade, reg_date).
 
-update_student()
-Updates the student's first name, last name, age, or grade. The user can press Enter to keep the current value.
+lessons: Stores unique lesson titles (id, title).
 
-show_student()
-Displays the student's information and the lessons they are enrolled in.
+student_lessons: Junction table handling the many-to-many relationship between students and lessons (student_id, lesson_id).
 
-main_menu()
-Displays the main menu and allows the user to choose what operation they want to perform.
+Getting Started
+Prerequisites
+Python 3.x
 
-How to Run:
+SQLite3 (Included with standard Python installation)
 
-Make sure Python 3 is installed, then run:
+How to Run
+Clone the repository:
+git clone https://github.com/your-username/your-repository-name.git
 
+Navigate to the project directory:
+cd your-repository-name
+
+Run the application:
 python main.py
 
-The program will automatically create the school.db database and the required tables.
-
-Main Menu:
-
+Usage Example
+=== School Management System ===
 a - Add New Student
 d - Delete Student
 u - Update Student Info
 s - Show Student Info
 q - Quit Program
 
-The project also includes the pseudocode and flowchart to explain the program logic.
-
-
-This project was created for educational purposes.
+License
+This project is open source and available for educational purposes.
