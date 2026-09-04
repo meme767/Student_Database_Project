@@ -1,4 +1,10 @@
+from datetime import datetime
 import sqlite3
+
+
+def is_valid_name(name):
+    clean_name = name.replace(" ", "")
+    return clean_name.isalpha() if clean_name else False
 
 
 def create_tables():
@@ -80,11 +86,40 @@ def add_student():
     conn = sqlite3.connect('school.db')
     cursor = conn.cursor()
     print("\n- Add New Student -")
-    firstname = input("Enter first name: ").strip()
-    lastname = input("Enter last name: ").strip()
-    age = int(input("Enter age: "))
+
+    while True:
+        firstname = input("Enter first name: ").strip()
+        if is_valid_name(firstname):
+            break
+        print("Invalid first name! Please enter letters only without numbers or special characters.")
+
+    while True:
+        lastname = input("Enter last name: ").strip()
+        if is_valid_name(lastname):
+            break
+        print("Invalid last name! Please enter letters only without numbers or special characters.")
+
+    while True:
+        try:
+            age = int(input("Enter age: ").strip())
+            if age > 0:
+                break
+            print("Age must be greater than 0!")
+        except ValueError:
+            print("Please enter a valid number for age!")
+
     grade = input("Enter grade: ").strip()
-    reg_date = input("Enter registration date (YYYY-MM-DD): ").strip()
+    while not grade:
+        print("Grade cannot be empty!")
+        grade = input("Enter grade: ").strip()
+
+    while True:
+        reg_date = input("Enter registration date (YYYY-MM-DD): ").strip()
+        try:
+            datetime.strptime(reg_date, "%Y-%m-%d")
+            break
+        except ValueError:
+            print("Invalid date format! Please enter date as YYYY-MM-DD (e.g., 2026-09-04).")
 
     cursor.execute('''
         INSERT INTO students (firstname, lastname, age, grade, reg_date)
@@ -96,7 +131,7 @@ def add_student():
     lessons_input = input("Enter lessons separated by commas (e.g., Math, Physics): ").strip()
 
     if lessons_input:
-        lessons_list = [l.strip() for l in lessons_input.split(",") if l.strip()]
+        lessons_list = [l.strip().capitalize() for l in lessons_input.split(",") if l.strip()]
 
         for lesson_name in lessons_list:
             cursor.execute("INSERT OR IGNORE INTO lessons (title) VALUES (?)", (lesson_name,))
@@ -107,7 +142,13 @@ def add_student():
 
     conn.commit()
     conn.close()
-    print("Student and lessons added successfully!")
+
+    print("\nStudent added successfully!")
+    print(f"New Student ID: {student_id}")
+    print(f"Name: {firstname} {lastname}")
+    print(f"Age: {age}")
+    print(f"Grade: {grade}")
+    print(f"Registration Date: {reg_date}")
 
 
 def update_student():
@@ -122,11 +163,40 @@ def update_student():
     if student:
         print(f"Current Info: {student[1]} {student[2]} - Age: {student[3]} - Grade: {student[4]}")
         print("Enter new info (or press Enter to keep current value):")
-        new_firstname = input(f"New First Name [{student[1]}]: ").strip() or student[1]
-        new_lastname = input(f"New Last Name [{student[2]}]: ").strip() or student[2]
-        age_input = input(f"New Age [{student[3]}]: ").strip()
-        new_age = int(age_input) if age_input else student[3]
+
+        while True:
+            new_firstname = input(f"New First Name [{student[1]}]: ").strip()
+            if not new_firstname:
+                new_firstname = student[1]
+                break
+            if is_valid_name(new_firstname):
+                break
+            print("Invalid first name! Please enter letters only.")
+
+        while True:
+            new_lastname = input(f"New Last Name [{student[2]}]: ").strip()
+            if not new_lastname:
+                new_lastname = student[2]
+                break
+            if is_valid_name(new_lastname):
+                break
+            print("Invalid last name! Please enter letters only.")
+
+        while True:
+            age_input = input(f"New Age [{student[3]}]: ").strip()
+            if not age_input:
+                new_age = student[3]
+                break
+            try:
+                new_age = int(age_input)
+                if new_age > 0:
+                    break
+                print("Age must be greater than 0!")
+            except ValueError:
+                print("Please enter a valid number for age!")
+
         new_grade = input(f"New Grade [{student[4]}]: ").strip() or student[4]
+
         cursor.execute('''
             UPDATE students
             SET firstname = ?, lastname = ?, age = ?, grade = ?
